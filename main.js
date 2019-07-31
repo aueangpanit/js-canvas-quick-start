@@ -1,23 +1,36 @@
-const cv = document.getElementById('canvas');
-const ctx = cv.getContext('2d');
-const cvWidth = cv.width;
-const cvHeight = cv.height;
+class Canvas {
+  constructor(cv) {
+    this.ctx = cv.getContext('2d');
+    this.cvWidth = cv.width;
+    this.cvHeight = cv.height;
+    this.lastRender = 0;
 
-function update(progress) {}
+    this.loop = this.loop.bind(this);
+  }
 
-function draw() {
-  ctx.clearRect(0, 0, cvWidth, cvHeight);
+  update(progress) {}
+
+  draw(timestamp) {
+    this.ctx.clearRect(0, 0, this.cvWidth, this.cvHeight);
+
+    this.ctx.fillRect(10, 10, 20, 20);
+    this.ctx.fillText(timestamp, 30, 30, 100);
+  }
+
+  loop(timestamp) {
+    const progress = timestamp - this.lastRender;
+
+    this.update(progress);
+    this.draw(timestamp);
+
+    this.lastRender = timestamp;
+    requestAnimationFrame(this.loop);
+  }
+
+  start() {
+    requestAnimationFrame(this.loop);
+  }
 }
 
-function loop(timestamp) {
-  const progress = timestamp - lastRender;
-
-  update(progress);
-  draw();
-
-  lastRender = timestamp;
-  window.requestAnimationFrame(loop);
-}
-
-let lastRender = 0;
-window.requestAnimationFrame(loop);
+const main = new Canvas(document.getElementById('canvas'));
+main.start();
